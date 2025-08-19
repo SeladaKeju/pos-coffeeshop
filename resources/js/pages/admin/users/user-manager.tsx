@@ -1,0 +1,94 @@
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem, type User } from '@/types';
+import { Head, router } from '@inertiajs/react';
+import { CustomTable } from '@/components/ui/c-table';
+import { CButtonIcon } from '@/components/ui/c-button';
+import { Button } from '@/components/ui/button';
+import { Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
+interface UsersPageProps {
+    users: User[];
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Users',
+        href: 'users',
+    },
+];
+
+export default function UsersPage({ users }: UsersPageProps) {
+    const [open, setOpen] = useState(false);
+    const [targetId, setTargetId] = useState<number | null>(null);
+    
+    const handleAdd = () => {
+        router.visit('/users/form');
+    };
+
+    const handleEdit = (id: number) => {
+        router.visit(`/users/form/${id}`);
+    };
+    
+    const handleDelete = (id: number) => {
+        if (confirm('Are you sure you want to delete this user?')) {
+            router.delete(`/users/${id}`, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Optionally show a toast or notification
+                },
+            });
+        }
+    };
+
+    const columns = [
+        {
+            label: 'ID',
+            render: (user: User) => user.id,
+        },
+        {
+            label: 'Name',
+            render: (user: User) => user.name,
+        },
+        {
+            label: 'Email',
+            render: (user: User) => user.email,
+        },
+        {
+            label: 'Email Verified',
+            render: (user: User) => user.email_verified_at ? 'Yes' : 'No',
+        },
+        {
+            label: 'Actions',
+            render: (user: User) => (
+                <div className="flex gap-2">
+                    <Button onClick={() => handleEdit(user.id)} className='bg-blue-600 hover:bg-blue-700 size-icon'><Pencil /></Button>
+                    <Button variant="destructive" onClick={() => handleDelete(user.id)} className='size-icon'><Trash2  /></Button>
+                </div>
+            ),
+        },
+    ];
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title='Users' />
+            <div className="p-6">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Users Management</h1>
+                    <p className="text-gray-600">Manage all users in the system</p>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow">
+                    <div className="p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold">All Users</h2>
+                            <Button onClick={handleAdd}>Add New User</Button>
+                        </div>
+                        <CustomTable columns={columns} data={users} />
+                    </div>
+                </div>
+            </div>
+        </AppLayout>
+    );
+};
+
