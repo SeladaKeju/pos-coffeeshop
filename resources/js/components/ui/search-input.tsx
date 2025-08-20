@@ -1,4 +1,3 @@
-import { router } from "@inertiajs/react";
 import { Search } from "lucide-react";
 import { Input } from "./input";
 import { useState } from "react";

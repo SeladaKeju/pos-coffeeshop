@@ -23,7 +23,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function UsersPage({ users, filters }: UsersPageProps) {
     // Get search value from URL parameters
     const currentSearch = filters?.search || '';
-    const hasSearchResults = users.length > 0 || !currentSearch;
     const handleSearch = (searchTerm: string) => {
         router.visit(route('users.index'), {
             data: {
