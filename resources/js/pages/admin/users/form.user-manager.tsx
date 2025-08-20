@@ -1,16 +1,15 @@
 import { PasswordInput } from '@/components/c-password-input';
-import {
-    MultiSelector,
-    MultiSelectorContent,
-    MultiSelectorInput,
-    MultiSelectorItem,
-    MultiSelectorList,
-    MultiSelectorTrigger,
-} from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Role, User } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,29 +22,33 @@ interface UserWithPassword extends User {
     password: string;
 }
 
-const formSchema = z.object({
+const createFormSchema = (isEdit: boolean) => z.object({
     username: z.string().min(2, {
         message: 'Username must be at least 2 characters.',
     }),
     email: z.string().email('Invalid email address.'),
-    password: z
-        .string()
-        .optional()
-        .refine((val) => !val || val.length >= 8, { message: 'Password must be at least 8 characters.' }),
+    password: isEdit 
+        ? z.string().optional().refine((val) => !val || val.length >= 8, { 
+            message: 'Password must be at least 8 characters.' 
+          })
+        : z.string().min(8, { message: 'Password must be at least 8 characters.' }),
+    role: z.string().min(1, 'Please select a role'),
 });
 
-export default function Dashboard() {
-    const { user } = usePage<{ user: UserWithPassword }>().props;
+export default function UserForm() {
+    const { user, allRoles } = usePage<{ user: UserWithPassword; allRoles: Role[] }>().props;
     const isEdit = !!user;
+
+    const formSchema = createFormSchema(isEdit);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Users',
-            href: '/users',
+            href: route('users.index'),
         },
         {
             title: isEdit ? 'Edit' : 'Create',
-            href: isEdit ? '/edit' : '/create',
+            href: isEdit ? route('users.edit', user?.id) : route('users.create'),
         },
     ];
 
@@ -55,6 +58,7 @@ export default function Dashboard() {
             username: user?.name ?? '',
             email: user?.email ?? '',
             password: '',
+            role: user?.roles?.[0] ?? '', // Ambil role pertama karena sekarang single select
         },
     });
 
@@ -66,6 +70,7 @@ export default function Dashboard() {
                 {
                     name: values.username,
                     email: values.email,
+                    roles: [values.role], // Convert single role to array for backend
                 },
                 {
                     preserveScroll: true,
@@ -88,6 +93,7 @@ export default function Dashboard() {
                     name: values.username,
                     email: values.email,
                     password: values.password,
+                    roles: [values.role], // Convert single role to array for backend
                 },
                 {
                     preserveScroll: true,
@@ -112,7 +118,7 @@ export default function Dashboard() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title={isEdit ? 'Edit User' : 'Create User'} />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <Card>
                     <CardHeader>
@@ -163,6 +169,30 @@ export default function Dashboard() {
                                         )}
                                     />
                                 )}
+                                <FormField
+                                    control={form.control}
+                                    name="role"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Role</FormLabel>
+                                            <FormControl>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select a role" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {allRoles?.map((role) => (
+                                                            <SelectItem key={role.id} value={role.name}>
+                                                                {role.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                                 <div className="flex gap-2 justify-end">
                                     <Button type="submit">Save</Button>
                                     <Button variant="outline" onClick={() => router.visit(route('users.index'))}>

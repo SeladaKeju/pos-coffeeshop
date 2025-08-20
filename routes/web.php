@@ -13,14 +13,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('admin/dashboard');
     })->name('dashboard');
 
-    // Custom user form routes for create and edit
-    Route::get('users/form', [UserController::class, 'form'])->name('users.form.create');
-    Route::get('users/form/{user}', [UserController::class, 'form'])->name('users.form.edit');
-
-    // Alias for delete (optional, resource already provides this)
-    Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.delete');
-
-    Route::resource('users', UserController::class);
+    // User Management Routes
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'form'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [UserController::class, 'form'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 });
 
 require __DIR__.'/settings.php';
