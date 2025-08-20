@@ -5,7 +5,6 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type User } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 
 interface UsersPageProps {
     users: User[];
@@ -19,8 +18,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UsersPage({ users }: UsersPageProps) {
-    const [open, setOpen] = useState(false);
-    const [targetId, setTargetId] = useState<number | null>(null);
 
     const handleAdd = () => {
         router.visit(route('users.create'));
