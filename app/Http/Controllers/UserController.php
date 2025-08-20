@@ -37,9 +37,24 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->get()->map(function ($user) {
+        $query = User::with('roles');
+        
+        // Handle search
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%")
+                  ->orWhereHas('roles', function ($roleQuery) use ($search) {
+                      $roleQuery->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        $users = $query->get()->map(function ($user) {
             return [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -52,7 +67,10 @@ class UserController extends Controller
         });
         
         return Inertia::render('admin/users/user-manager', [
-            'users' => $users
+            'users' => $users,
+            'filters' => [
+                'search' => $request->search
+            ]
         ]);
     }
 

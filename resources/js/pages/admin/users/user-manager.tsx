@@ -1,13 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { CustomTable } from '@/components/ui/c-table';
-import { Input } from '@/components/ui/input';
+import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type User } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Search, Trash2 } from 'lucide-react';
 
 interface UsersPageProps {
     users: User[];
+    filters: {
+        search?: string;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,8 +20,20 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function UsersPage({ users }: UsersPageProps) {
-
+export default function UsersPage({ users, filters }: UsersPageProps) {
+    // Get search value from URL parameters
+    const currentSearch = filters?.search || '';
+    const hasSearchResults = users.length > 0 || !currentSearch;
+    const handleSearch = (searchTerm: string) => {
+        router.visit(route('users.index'), {
+            data: {
+                search: searchTerm,
+                page: 1,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
     const handleAdd = () => {
         router.visit(route('users.create'));
     };
@@ -91,13 +106,33 @@ export default function UsersPage({ users }: UsersPageProps) {
                 <div className="rounded-lg bg-white shadow">
                     <div className="p-6">
                         <div className="mb-4">
-                            <h2 className="mb-3 text-lg font-semibold">All Users</h2>
+                            <div className="mb-3 flex items-center justify-between">
+                                <h2 className="text-lg font-semibold">All Users</h2>
+                            </div>
                             <div className="flex items-center justify-between gap-4">
-                                <Input type="email" placeholder="Search" className="max-w-sm" />
+                                {/* Server-Side Search Input */}
+                                <SearchInput
+                                    value={currentSearch}
+                                    onSearch={handleSearch}
+                                    placeholder="Search users..."
+                                    className="max-w-md"
+                                />
                                 <Button onClick={handleAdd}>Add New User</Button>
                             </div>
                         </div>
-                        <CustomTable columns={columns} data={users} />
+
+                        {/* Search Results or Empty State */}
+                        {users.length === 0 && currentSearch ? (
+                            <div className="rounded-lg bg-gray-50 py-12 text-center">
+                                <Search className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+                                <h3 className="mb-2 text-lg font-medium text-gray-900">No users found</h3>
+                                <p className="text-gray-500">
+                                    No users match your search for "<span className="font-semibold">{currentSearch}</span>"
+                                </p>
+                            </div>
+                        ) : (
+                            <CustomTable columns={columns} data={users} />
+                        )}
                     </div>
                 </div>
             </div>
