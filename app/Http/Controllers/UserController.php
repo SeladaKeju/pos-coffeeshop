@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -13,13 +14,23 @@ class UserController extends Controller
      */
     public function form($id = null)
     {
-        $user = $id ? User::findOrFail($id) : null;
-        // Get all roles if you have a Role model
-        // $allRoles = Role::all();
+        $user = $id ? User::with('roles')->findOrFail($id) : null;
+        $allRoles = Role::all();
+        
+        // Format user data with roles as array of strings if user exists
+        $userData = null;
+        if ($user) {
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $user->roles->pluck('name')->toArray(),
+            ];
+        }
         
         return Inertia::render('admin/users/form.user-manager', [
-            'user' => $user,
-            // 'allRoles' => $allRoles,
+            'user' => $userData,
+            'allRoles' => $allRoles,
         ]);
     }
 
@@ -28,18 +39,21 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('roles')->get()->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'email_verified_at' => $user->email_verified_at,
+                'roles' => $user->roles->pluck('name')->toArray(),
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ];
+        });
+        
         return Inertia::render('admin/users/user-manager', [
             'users' => $users
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return $this->form();
     }
 
     /**
@@ -51,31 +65,20 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'string|exists:roles,name',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
 
+        // Assign roles to user
+        $user->assignRole($request->roles);
+
         return redirect()->route('users.index')->with('success', 'User created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        return $this->form($id);
     }
 
     /**
@@ -83,7 +86,20 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'string|exists:roles,name',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        // Sync roles (remove old roles and assign new ones)
+        $user->syncRoles($request->roles);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
@@ -91,11 +107,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
         $user->delete();
-
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

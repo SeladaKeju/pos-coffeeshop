@@ -23,16 +23,16 @@ export default function UsersPage({ users }: UsersPageProps) {
     const [targetId, setTargetId] = useState<number | null>(null);
 
     const handleAdd = () => {
-        router.visit('/users/form');
+        router.visit(route('users.create'));
     };
 
     const handleEdit = (id: number) => {
-        router.visit(`/users/form/${id}`);
+        router.visit(route('users.edit', id));
     };
 
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this user?')) {
-            router.delete(`/users/${id}`, {
+            router.delete(route('users.destroy', id), {
                 preserveScroll: true,
                 onSuccess: () => {
                     // Optionally show a toast or notification
@@ -55,8 +55,17 @@ export default function UsersPage({ users }: UsersPageProps) {
             render: (user: User) => user.email,
         },
         {
-            label: 'Email Verified',
-            render: (user: User) => (user.email_verified_at ? 'Yes' : 'No'),
+            label: 'Roles',
+            render: (user: User) => (
+                <div className="flex flex-wrap gap-1">
+                    {user.roles.map((role, index) => (
+                        <span key={index} className="text-sm">
+                            {role}
+                            {index < user.roles.length - 1 && ', '}
+                        </span>
+                    ))}
+                </div>
+            ),
         },
         {
             label: 'Actions',
@@ -85,7 +94,7 @@ export default function UsersPage({ users }: UsersPageProps) {
                 <div className="rounded-lg bg-white shadow">
                     <div className="p-6">
                         <div className="mb-4">
-                            <h2 className="text-lg font-semibold mb-3">All Users</h2>
+                            <h2 className="mb-3 text-lg font-semibold">All Users</h2>
                             <div className="flex items-center justify-between gap-4">
                                 <Input type="email" placeholder="Search" className="max-w-sm" />
                                 <Button onClick={handleAdd}>Add New User</Button>
