@@ -114,7 +114,6 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                                     value={currentSearch}
                                     onSearch={handleSearch}
                                     placeholder="Search users..."
-                                    className="max-w-md"
                                 />
                                 <Button onClick={handleAdd}>Add New User</Button>
                             </div>
