@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -16,7 +17,7 @@ class UserController extends Controller
     {
         $user = $id ? User::with('roles')->findOrFail($id) : null;
         $allRoles = Role::all();
-        
+
         // Format user data with roles as array of strings if user exists
         $userData = null;
         if ($user) {
@@ -27,7 +28,7 @@ class UserController extends Controller
                 'roles' => $user->roles->pluck('name')->toArray(),
             ];
         }
-        
+
         return Inertia::render('admin/users/form.user-manager', [
             'user' => $userData,
             'allRoles' => $allRoles,
@@ -39,21 +40,22 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+
         $query = User::with('roles');
-        
+
         // Handle search
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('id', 'like', "%{$search}%")
-                  ->orWhereHas('roles', function ($roleQuery) use ($search) {
-                      $roleQuery->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('id', 'like', "%{$search}%")
+                    ->orWhereHas('roles', function ($roleQuery) use ($search) {
+                        $roleQuery->where('name', 'like', "%{$search}%");
+                    });
             });
         }
-        
+
         $users = $query->get()->map(function ($user) {
             return [
                 'id' => $user->id,
@@ -65,7 +67,7 @@ class UserController extends Controller
                 'updated_at' => $user->updated_at,
             ];
         });
-        
+
         return Inertia::render('admin/users/user-manager', [
             'users' => $users,
             'filters' => [

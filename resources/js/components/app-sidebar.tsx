@@ -17,7 +17,32 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         href: '/users',
         icon: UserRound,
+        role: 'admin',
     },
+    {
+        title: 'Menus',
+        href: '/menus',
+        icon: UserRound,
+        role: 'admin',
+    },
+    {
+        title: 'Master Data',
+        href: '#',
+        icon: LayoutGrid,
+        subitem: [
+            {
+                title: 'Category',
+                href: `/master-data/category`,
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Menu Variant',
+                href: `/master-data/menu-variant`,
+                icon: LayoutGrid,
+            },
+        ],
+    },
+
 ];
 
 const footerNavItems: NavItem[] = [
