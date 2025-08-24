@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { CustomTable } from '@/components/ui/c-table';
 import { SearchInput } from '@/components/ui/search-input';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type User } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Pencil, Search, Trash2 } from 'lucide-react';
+import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
 
 interface UsersPageProps {
     users: User[];
@@ -41,8 +42,12 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
         router.visit(route('users.edit', id));
     };
 
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this user?')) {
+    const handleView = (id: number) => {
+        router.visit(route('users.show', id));
+    };
+
+    const handleDelete = (id: number, name: string) => {
+        if (confirm(`Are you sure you want to delete user "${name}"?`)) {
             router.delete(route('users.destroy', id), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -81,14 +86,32 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
         {
             label: 'Actions',
             render: (user: User) => (
-                <div className="flex gap-2">
-                    <Button onClick={() => handleEdit(user.id)} className="size-icon bg-blue-600 hover:bg-blue-700">
-                        <Pencil />
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleDelete(user.id)} className="size-icon">
-                        <Trash2 />
-                    </Button>
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">Open menu</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleView(user.id)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(user.id)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit User
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                            variant="destructive"
+                            onClick={() => handleDelete(user.id, user.name)}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete User
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             ),
         },
     ];
@@ -115,7 +138,10 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                                     onSearch={handleSearch}
                                     placeholder="Search users..."
                                 />
-                                <Button onClick={handleAdd}>Add New User</Button>
+                                <Button onClick={handleAdd}>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add New User
+                                </Button>
                             </div>
                         </div>
 

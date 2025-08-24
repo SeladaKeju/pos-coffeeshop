@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MasterData\CategoryController;
+use App\Http\Controllers\MasterData\MenuVariantController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -22,6 +24,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{user}/edit', [UserController::class, 'form'])->name('edit');
             Route::put('/{user}', [UserController::class, 'update'])->name('update');
             Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
+        
+        // Category Management Routes
+        Route::prefix('categories')->name('categories.')->group(function () {
+            Route::get('/', [CategoryController::class, 'index'])->name('index');
+            Route::post('/', [CategoryController::class, 'store'])->name('store');
+            Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+            Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+        });
+
+        // Menu Variant Management Routes
+        Route::prefix('menu-variants')->name('menu-variants.')->group(function () {
+            Route::get('/', [MenuVariantController::class, 'index'])->name('index');
+            Route::post('/', [MenuVariantController::class, 'store'])->name('store');
+            Route::put('/{menuVariant}', [MenuVariantController::class, 'update'])->name('update');
+            Route::delete('/{menuVariant}', [MenuVariantController::class, 'destroy'])->name('destroy');
         });
     });
 });
