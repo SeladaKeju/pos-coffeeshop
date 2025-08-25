@@ -20,4 +20,10 @@ class Category extends Model
     {
         return $this->hasMany(Menu::class);
     }
+    
+    // Scope untuk include menus count
+    public function scopeWithMenusCount($query)
+    {
+        return $query->withCount('menus');
+    }
 }

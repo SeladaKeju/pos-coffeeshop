@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menu_variants', function (Blueprint $table) {
+        Schema::create('variant_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
-            $table->string('name'); // e.g., 'Large', 'Hot', 'Ice', 'Extra Shot'
-            $table->decimal('extra_price', 12, 2)->default(0); // harga tambahan
+            $table->string('name'); // e.g., "Size", "Temperature", "Milk Type"
+            $table->string('type')->default('single'); // single, multiple
+            $table->boolean('is_required')->default(false);
+            $table->integer('sort_order')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menu_variants');
+        Schema::dropIfExists('variant_groups');
     }
 };

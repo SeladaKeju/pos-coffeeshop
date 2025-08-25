@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, UserRound } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, UserRound, UtensilsCrossed, Server } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,28 +22,26 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Menus',
         href: '/menus',
-        icon: UserRound,
+        icon: UtensilsCrossed,
         role: 'admin',
     },
-    {
-        title: 'Master Data',
-        href: '#',
-        icon: LayoutGrid,
-        subitem: [
-            {
-                title: 'Category',
-                href: `/master-data/category`,
-                icon: LayoutGrid,
-            },
-            {
-                title: 'Menu Variant',
-                href: `/master-data/menu-variant`,
-                icon: LayoutGrid,
-            },
-        ],
-    },
-
-];
+        {
+            title: 'Master Data',
+            href: '#',
+            icon: Server,
+            subitem: [
+                {
+                    title: 'Category',
+                    href: `/categories`,
+                    icon: LayoutGrid,
+                },
+                {
+                    title: 'Menu Variant',
+                    href: `/menu-variants`,
+                    icon: LayoutGrid,
+                },
+            ],
+        },];
 
 const footerNavItems: NavItem[] = [
     {
