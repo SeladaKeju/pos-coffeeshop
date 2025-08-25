@@ -63,7 +63,6 @@ export default function UserForm() {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
         if (isEdit) {
             router.put(
                 route('users.update', user.id),
@@ -75,7 +74,6 @@ export default function UserForm() {
                 {
                     preserveScroll: true,
                     onSuccess: () => {
-                        console.log('User updated successfully!');
                         router.visit(route('users.index'));
                     },
                     onError: (errors) => {
@@ -98,7 +96,6 @@ export default function UserForm() {
                 {
                     preserveScroll: true,
                     onSuccess: () => {
-                        console.log('User created successfully!');
                         router.visit(route('users.index'));
                     },
                     onError: (errors) => {

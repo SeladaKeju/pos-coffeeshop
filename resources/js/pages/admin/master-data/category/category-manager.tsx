@@ -108,31 +108,26 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         
-        console.log('Form submitted with data:', data);
-        console.log('Editing category:', editingCategory);
-        
         if (editingCategory) {
             // Update existing category
             put(route('categories.update', editingCategory.id), {
                 onSuccess: () => {
-                    console.log('Category updated successfully');
                     setIsDialogOpen(false);
                     reset();
                 },
                 onError: (errors) => {
-                    console.log('Error updating category:', errors);
+                    // Handle error appropriately in production
                 }
             });
         } else {
             // Create new category
             post(route('categories.store'), {
                 onSuccess: () => {
-                    console.log('Category created successfully');
                     setIsDialogOpen(false);
                     reset();
                 },
                 onError: (errors) => {
-                    console.log('Error creating category:', errors);
+                    // Handle error appropriately in production
                 }
             });
         }

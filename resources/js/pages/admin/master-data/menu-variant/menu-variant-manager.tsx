@@ -162,31 +162,26 @@ export default function MenuVariantsPage({ menuVariants, menus, filters }: MenuV
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         
-        console.log('Form submitted with data:', data);
-        console.log('Editing variant:', editingVariant);
-        
         if (editingVariant) {
             // Update existing variant
             put(route('menu-variants.update', editingVariant.id), {
                 onSuccess: () => {
-                    console.log('Menu variant updated successfully');
                     setIsDialogOpen(false);
                     reset();
                 },
                 onError: (errors) => {
-                    console.log('Error updating menu variant:', errors);
+                    // Handle error appropriately in production
                 }
             });
         } else {
             // Create new variant
             post(route('menu-variants.store'), {
                 onSuccess: () => {
-                    console.log('Menu variant created successfully');
                     setIsDialogOpen(false);
                     reset();
                 },
                 onError: (errors) => {
-                    console.log('Error creating menu variant:', errors);
+                    // Handle error appropriately in production
                 }
             });
         }
