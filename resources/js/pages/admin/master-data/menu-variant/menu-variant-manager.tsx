@@ -36,8 +36,25 @@ interface MenuVariant {
 interface MenuVariantsPageProps {
     menuVariants: {
         data: MenuVariant[];
-        links: any[];
-        meta: any;
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+        meta: {
+            current_page: number;
+            from: number | null;
+            last_page: number;
+            links: {
+                url: string | null;
+                label: string;
+                active: boolean;
+            }[];
+            path: string;
+            per_page: number;
+            to: number | null;
+            total: number;
+        };
     };
     menus: Menu[];
     filters: {
