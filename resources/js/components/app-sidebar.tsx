@@ -25,25 +25,23 @@ const mainNavItems: NavItem[] = [
         icon: UtensilsCrossed,
         role: 'admin',
     },
-    {
-        title: 'Master Data',
-        href: '#',
-        icon: Server,
-        subitem: [
-            {
-                title: 'Category',
-                href: `/categories`,
-                icon: LayoutGrid,
-            },
-            {
-                title: 'Menu Variant',
-                href: `/master-data/menu-variant`,
-                icon: LayoutGrid,
-            },
-        ],
-    },
-
-];
+        {
+            title: 'Master Data',
+            href: '#',
+            icon: Server,
+            subitem: [
+                {
+                    title: 'Category',
+                    href: `/categories`,
+                    icon: LayoutGrid,
+                },
+                {
+                    title: 'Menu Variant',
+                    href: `/menu-variants`,
+                    icon: LayoutGrid,
+                },
+            ],
+        },];
 
 const footerNavItems: NavItem[] = [
     {

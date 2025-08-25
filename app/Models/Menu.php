@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Menu extends Model
@@ -33,6 +34,18 @@ class Menu extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(MenuVariant::class);
+    }
+
+    public function variantGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(VariantGroup::class, 'menu_variant_groups');
+    }
+
+    public function activeVariantGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(VariantGroup::class, 'menu_variant_groups')
+                    ->where('variant_groups.is_active', true)
+                    ->orderBy('variant_groups.sort_order');
     }
 
     // Scope untuk filter by station

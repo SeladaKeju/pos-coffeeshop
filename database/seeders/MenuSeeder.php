@@ -26,14 +26,14 @@ class MenuSeeder extends Seeder
         // Coffee Menu Items
         if ($coffeeCategory) {
             $coffeeMenus = [
-                ['name' => 'Espresso', 'sku' => 'CF-ESP-001', 'price' => 18000, 'station' => 'barista'],
-                ['name' => 'Americano', 'sku' => 'CF-AME-002', 'price' => 22000, 'station' => 'barista'],
-                ['name' => 'Cappuccino', 'sku' => 'CF-CAP-003', 'price' => 28000, 'station' => 'barista'],
-                ['name' => 'Latte', 'sku' => 'CF-LAT-004', 'price' => 30000, 'station' => 'barista'],
-                ['name' => 'Macchiato', 'sku' => 'CF-MAC-005', 'price' => 32000, 'station' => 'barista'],
-                ['name' => 'Mocha', 'sku' => 'CF-MOC-006', 'price' => 35000, 'station' => 'barista'],
-                ['name' => 'Caramel Latte', 'sku' => 'CF-CAL-007', 'price' => 38000, 'station' => 'barista'],
-                ['name' => 'Vanilla Latte', 'sku' => 'CF-VL-008', 'price' => 38000, 'station' => 'barista'],
+                ['name' => 'Espresso', 'sku' => 'CF-ESP-001', 'price' => 18000, 'station' => 'bar'],
+                ['name' => 'Americano', 'sku' => 'CF-AME-002', 'price' => 22000, 'station' => 'bar'],
+                ['name' => 'Cappuccino', 'sku' => 'CF-CAP-003', 'price' => 28000, 'station' => 'bar'],
+                ['name' => 'Latte', 'sku' => 'CF-LAT-004', 'price' => 30000, 'station' => 'bar'],
+                ['name' => 'Macchiato', 'sku' => 'CF-MAC-005', 'price' => 32000, 'station' => 'bar'],
+                ['name' => 'Mocha', 'sku' => 'CF-MOC-006', 'price' => 35000, 'station' => 'bar'],
+                ['name' => 'Caramel Latte', 'sku' => 'CF-CAL-007', 'price' => 38000, 'station' => 'bar'],
+                ['name' => 'Vanilla Latte', 'sku' => 'CF-VL-008', 'price' => 38000, 'station' => 'bar'],
             ];
 
             foreach ($coffeeMenus as $menu) {
