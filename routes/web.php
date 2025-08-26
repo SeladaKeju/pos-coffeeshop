@@ -5,6 +5,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MasterData\CategoryController;
 use App\Http\Controllers\MasterData\MenuVariantController;
+use App\Http\Controllers\MasterData\VariantGroupController;
+use App\Http\Controllers\MasterData\VariantOptionController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -34,12 +36,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
         });
 
-        // Menu Variant Management Routes
-        Route::prefix('menu-variants')->name('menu-variants.')->group(function () {
-            Route::get('/', [MenuVariantController::class, 'index'])->name('index');
-            Route::post('/', [MenuVariantController::class, 'store'])->name('store');
-            Route::put('/{menuVariant}', [MenuVariantController::class, 'update'])->name('update');
-            Route::delete('/{menuVariant}', [MenuVariantController::class, 'destroy'])->name('destroy');
+        // Variant Group Management Routes
+        Route::prefix('variant-groups')->name('admin.variant-groups.')->group(function () {
+            Route::get('/', [VariantGroupController::class, 'index'])->name('index');
+            Route::get('/create', [VariantGroupController::class, 'create'])->name('create');
+            Route::post('/', [VariantGroupController::class, 'store'])->name('store');
+            Route::get('/{variantGroup}', [VariantGroupController::class, 'show'])->name('show');
+            Route::get('/{variantGroup}/edit', [VariantGroupController::class, 'edit'])->name('edit');
+            Route::put('/{variantGroup}', [VariantGroupController::class, 'update'])->name('update');
+            Route::delete('/{variantGroup}', [VariantGroupController::class, 'destroy'])->name('destroy');
+        });
+
+        // Variant Option Management Routes
+        Route::prefix('variant-options')->name('admin.variant-options.')->group(function () {
+            Route::get('/', [VariantOptionController::class, 'index'])->name('index');
+            Route::get('/create', [VariantOptionController::class, 'create'])->name('create');
+            Route::post('/', [VariantOptionController::class, 'store'])->name('store');
+            Route::get('/{variantOption}', [VariantOptionController::class, 'show'])->name('show');
+            Route::get('/{variantOption}/edit', [VariantOptionController::class, 'edit'])->name('edit');
+            Route::put('/{variantOption}', [VariantOptionController::class, 'update'])->name('update');
+            Route::delete('/{variantOption}', [VariantOptionController::class, 'destroy'])->name('destroy');
         });
     });
 });

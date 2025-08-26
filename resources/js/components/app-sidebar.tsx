@@ -36,8 +36,8 @@ const mainNavItems: NavItem[] = [
                     icon: LayoutGrid,
                 },
                 {
-                    title: 'Menu Variant',
-                    href: `/menu-variants`,
+                    title: 'Variant Groups',
+                    href: `/variant-groups`,
                     icon: LayoutGrid,
                 },
             ],

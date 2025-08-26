@@ -52,3 +52,22 @@ export interface Role {
     created_at: string;
     updated_at: string;
 }
+
+export interface VariantGroup {
+    id: number;
+    name: string;
+    type: 'single' | 'multiple';
+    is_required: boolean;
+    sort_order: number;
+    is_active: boolean;
+}
+
+
+interface Category {
+    id: number;
+    name: string;
+    sort: number;
+    menus_count?: number;
+    created_at: string;
+    updated_at: string;
+}

@@ -6,19 +6,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
 import { useState, FormEvent } from 'react';
-
-interface Category {
-    id: number;
-    name: string;
-    sort: number;
-    menus_count?: number;
-    created_at: string;
-    updated_at: string;
-}
 
 interface CategoriesPageProps {
     categories: Category[];
