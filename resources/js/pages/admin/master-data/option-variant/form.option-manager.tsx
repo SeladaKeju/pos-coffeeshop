@@ -14,15 +14,15 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, VariantGroup, VariantOption } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Head, router, usePage } from '@inertiajs/react';
+import type { PageProps } from '@inertiajs/core';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-interface VariantOptionFormPageProps {
+interface VariantOptionFormPageProps extends PageProps {
     variantGroup?: VariantGroup;
     variantGroups?: VariantGroup[];
     variantOption?: VariantOption;
-    [key: string]: any;
 }
 
 const formSchema = z.object({

@@ -106,9 +106,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                     setIsDialogOpen(false);
                     reset();
                 },
-                onError: (errors) => {
-                    // Handle error appropriately in production
-                },
             });
         } else {
             // Create new category
@@ -116,9 +113,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                 onSuccess: () => {
                     setIsDialogOpen(false);
                     reset();
-                },
-                onError: (errors) => {
-                    // Handle error appropriately in production
                 },
             });
         }

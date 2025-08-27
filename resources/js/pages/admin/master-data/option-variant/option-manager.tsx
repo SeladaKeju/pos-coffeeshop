@@ -9,8 +9,6 @@ import { ArrowRight, Search } from 'lucide-react';
 interface VariantGroupsPageProps {
     variantGroups: {
         data: VariantGroup[];
-        links: any[];
-        meta: any;
     };
     filters?: {
         search?: string;

@@ -10,8 +10,6 @@ import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
 interface VariantGroupsPageProps {
     variantGroups: {
         data: VariantGroup[];
-        links: any[];
-        meta: any;
     };
     filters?: {
         search?: string;

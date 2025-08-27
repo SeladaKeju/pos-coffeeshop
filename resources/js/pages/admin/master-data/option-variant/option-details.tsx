@@ -11,8 +11,6 @@ interface VariantOptionsDetailPageProps {
     variantGroup: VariantGroup;
     variantOptions: {
         data: VariantOption[];
-        links: any[];
-        meta: any;
     };
     filters?: {
         search?: string;
