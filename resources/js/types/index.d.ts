@@ -2,7 +2,7 @@ import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
-    user: User;
+    user: User | null;
 }
 
 export interface BreadcrumbItem {
@@ -20,6 +20,8 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    role?: string;
+    subitem?: NavItem[];
 }
 
 export interface SharedData {
@@ -35,9 +37,47 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    roles: string[];
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Role {
+    id: number;
+    name: string;
+    guard_name: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface VariantGroup {
+    id: number;
+    name: string;
+    type: 'single' | 'multiple';
+    is_required: boolean;
+    sort_order: number;
+    is_active: boolean;
+}
+
+
+export interface Category {
+    id: number;
+    name: string;
+    sort: number;
+    menus_count?: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface VariantOption {
+    id: number;
+    name: string;
+    extra_price: number;
+    sort_order: number;
+    is_active: boolean;
+    variant_group_id: number;
+}
+
