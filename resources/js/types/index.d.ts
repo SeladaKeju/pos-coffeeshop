@@ -63,7 +63,7 @@ export interface VariantGroup {
 }
 
 
-interface Category {
+export interface Category {
     id: number;
     name: string;
     sort: number;
@@ -71,3 +71,13 @@ interface Category {
     created_at: string;
     updated_at: string;
 }
+
+export interface VariantOption {
+    id: number;
+    name: string;
+    extra_price: number;
+    sort_order: number;
+    is_active: boolean;
+    variant_group_id: number;
+}
+

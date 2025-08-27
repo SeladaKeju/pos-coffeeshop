@@ -40,6 +40,11 @@ const mainNavItems: NavItem[] = [
                     href: `/variant-groups`,
                     icon: LayoutGrid,
                 },
+                {
+                    title: 'Variant Options',
+                    href: `/variant-options`,
+                    icon: LayoutGrid,
+                },
             ],
         },];
 

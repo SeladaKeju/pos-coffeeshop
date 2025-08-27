@@ -50,6 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Variant Option Management Routes
         Route::prefix('variant-options')->name('admin.variant-options.')->group(function () {
             Route::get('/', [VariantOptionController::class, 'index'])->name('index');
+            Route::get('/variant-group/{variantGroup}/manage', [VariantOptionController::class, 'manage'])->name('manage');
             Route::get('/create', [VariantOptionController::class, 'create'])->name('create');
             Route::post('/', [VariantOptionController::class, 'store'])->name('store');
             Route::get('/{variantOption}', [VariantOptionController::class, 'show'])->name('show');

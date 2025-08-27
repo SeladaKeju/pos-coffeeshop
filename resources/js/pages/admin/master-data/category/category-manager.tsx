@@ -1,15 +1,15 @@
-import { CustomTable } from '@/components/ui/c-table';
-import { SearchInput } from '@/components/ui/search-input';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CustomTable } from '@/components/ui/c-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
-import { useState, FormEvent } from 'react';
+import { Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { FormEvent, useState } from 'react';
 
 interface CategoriesPageProps {
     categories: Category[];
@@ -36,13 +36,13 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
 
     // Get search value from URL parameters
     const currentSearch = filters?.search || '';
-    
+
     // Inertia form setup
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
         sort: 1,
     });
-    
+
     const handleSearch = (searchTerm: string) => {
         router.visit(route('categories.index'), {
             data: {
@@ -98,7 +98,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        
+
         if (editingCategory) {
             // Update existing category
             put(route('categories.update', editingCategory.id), {
@@ -108,7 +108,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                 },
                 onError: (errors) => {
                     // Handle error appropriately in production
-                }
+                },
             });
         } else {
             // Create new category
@@ -119,7 +119,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                 },
                 onError: (errors) => {
                     // Handle error appropriately in production
-                }
+                },
             });
         }
     };
@@ -127,11 +127,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
     const columns = [
         {
             label: 'No',
-            render: (category: Category) => (
-                <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full text-sm font-medium">
-                    {category.sort}
-                </span>
-            ),
+            render: (category: Category) => category.sort,
         },
         {
             label: 'Name',
@@ -143,11 +139,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
         },
         {
             label: 'Menus',
-            render: (category: Category) => (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {category.menus_count || 0} menus
-                </span>
-            ),
+            render: (category: Category) => <>{category.menus_count || 0}</>,
         },
         {
             label: 'Actions',
@@ -169,10 +161,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                             Edit Category
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                            variant="destructive"
-                            onClick={() => handleDelete(category.id, category.name)}
-                        >
+                        <DropdownMenuItem variant="destructive" onClick={() => handleDelete(category.id, category.name)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete Category
                         </DropdownMenuItem>
@@ -180,7 +169,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                 </DropdownMenu>
             ),
         },
-
     ];
 
     return (
@@ -200,12 +188,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                             </div>
                             <div className="flex items-center justify-between gap-4">
                                 {/* Server-Side Search Input */}
-                                <SearchInput
-                                    value={currentSearch}
-                                    onSearch={handleSearch}
-                                    placeholder="Search categories..."
-                                    className="max-w-md"
-                                />
+                                <SearchInput value={currentSearch} onSearch={handleSearch} placeholder="Search categories..." className="max-w-md" />
                                 <Button onClick={handleAdd}>
                                     <Plus className="mr-2 h-4 w-4" />
                                     Add New Category
@@ -224,11 +207,11 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                             </div>
                         ) : categories.length === 0 ? (
                             <div className="rounded-lg bg-gray-50 py-12 text-center">
-                                <div className="mx-auto mb-4 h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                                    <span className="text-gray-400 text-2xl">📂</span>
+                                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+                                    <span className="text-2xl text-gray-400">📂</span>
                                 </div>
                                 <h3 className="mb-2 text-lg font-medium text-gray-900">No categories yet</h3>
-                                <p className="text-gray-500 mb-4">Categories will appear here once they are created</p>
+                                <p className="mb-4 text-gray-500">Categories will appear here once they are created</p>
                             </div>
                         ) : (
                             <CustomTable columns={columns} data={categories} />
@@ -241,24 +224,16 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>
-                            {isViewMode 
-                                ? 'View Category' 
-                                : editingCategory 
-                                    ? 'Edit Category' 
-                                    : 'Add New Category'
-                            }
-                        </DialogTitle>
+                        <DialogTitle>{isViewMode ? 'View Category' : editingCategory ? 'Edit Category' : 'Add New Category'}</DialogTitle>
                         <DialogDescription>
-                            {isViewMode 
+                            {isViewMode
                                 ? 'Category details and information.'
-                                : editingCategory 
-                                    ? 'Make changes to the category information.' 
-                                    : 'Fill in the category information to create a new category.'
-                            }
+                                : editingCategory
+                                  ? 'Make changes to the category information.'
+                                  : 'Fill in the category information to create a new category.'}
                         </DialogDescription>
                     </DialogHeader>
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid gap-4 py-4">
                             <div className="space-y-2">
@@ -272,11 +247,9 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                     disabled={isViewMode}
                                     className={errors.name ? 'border-red-500' : ''}
                                 />
-                                {errors.name && (
-                                    <p className="text-sm text-red-500">{errors.name}</p>
-                                )}
+                                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                             </div>
-                            
+
                             <div className="space-y-2">
                                 <Label htmlFor="sort">Sort Order</Label>
                                 <Input
@@ -289,31 +262,17 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                     disabled={isViewMode}
                                     className={errors.sort ? 'border-red-500' : ''}
                                 />
-                                {errors.sort && (
-                                    <p className="text-sm text-red-500">{errors.sort}</p>
-                                )}
+                                {errors.sort && <p className="text-sm text-red-500">{errors.sort}</p>}
                             </div>
                         </div>
-                        
+
                         <DialogFooter>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                onClick={() => setIsDialogOpen(false)}
-                            >
+                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                                 {isViewMode ? 'Close' : 'Cancel'}
                             </Button>
                             {!isViewMode && (
-                                <Button 
-                                    type="submit" 
-                                    disabled={processing}
-                                >
-                                    {processing 
-                                        ? 'Saving...' 
-                                        : editingCategory 
-                                            ? 'Update Category' 
-                                            : 'Create Category'
-                                    }
+                                <Button type="submit" disabled={processing}>
+                                    {processing ? 'Saving...' : editingCategory ? 'Update Category' : 'Create Category'}
                                 </Button>
                             )}
                         </DialogFooter>

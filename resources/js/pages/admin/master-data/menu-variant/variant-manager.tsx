@@ -69,11 +69,9 @@ export default function VariantGroupsPage({ variantGroups, filters }: VariantGro
 
     const columns = [
         {
-            label: 'Sort',
+            label: 'No',
             render: (variantGroup: VariantGroup) => (
-                <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full text-sm font-medium">
-                    {variantGroup.sort_order}
-                </span>
+               variantGroup.sort_order
             ),
         },
         {
@@ -86,39 +84,18 @@ export default function VariantGroupsPage({ variantGroups, filters }: VariantGro
         },
         {
             label: 'Type',
-            render: (variantGroup: VariantGroup) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    variantGroup.type === 'single' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-green-100 text-green-800'
-                }`}>
-                    {variantGroup.type === 'single' ? 'Single Choice' : 'Multiple Choice'}
-                </span>
-            ),
+            render: (variantGroup: VariantGroup) =>
+                variantGroup.type === 'single' ? 'Single Choice' : 'Multiple Choice',
         },
         {
             label: 'Required',
-            render: (variantGroup: VariantGroup) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    variantGroup.is_required 
-                        ? 'bg-red-100 text-red-800' 
-                        : 'bg-gray-100 text-gray-800'
-                }`}>
-                    {variantGroup.is_required ? 'Required' : 'Optional'}
-                </span>
-            ),
+            render: (variantGroup: VariantGroup) =>
+                variantGroup.is_required ? 'Required' : 'Optional',
         },
         {
             label: 'Status',
-            render: (variantGroup: VariantGroup) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    variantGroup.is_active 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                }`}>
-                    {variantGroup.is_active ? 'Active' : 'Inactive'}
-                </span>
-            ),
+            render: (variantGroup: VariantGroup) =>
+                variantGroup.is_active ? 'Active' : 'Inactive',
         },
         {
             label: 'Actions',

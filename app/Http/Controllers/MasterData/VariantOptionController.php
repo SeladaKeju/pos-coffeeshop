@@ -15,32 +15,45 @@ class VariantOptionController extends Controller
      */
     public function index(Request $request)
     {
-        $query = VariantOption::with(['variantGroup']);
+        $variantGroups = VariantGroup::orderBy('sort_order')
+            ->paginate(10);
 
-        // Filter by variant group if provided
-        if ($request->has('variant_group_id')) {
-            $query->where('variant_group_id', $request->variant_group_id);
-        }
-
-        $variantOptions = $query->orderBy('sort_order')->paginate(10);
-        $variantGroups = VariantGroup::active()->ordered()->get();
-
-        return Inertia::render('admin/master-data/variant-option/variant-option-manager', [
-            'variantOptions' => $variantOptions,
+        return Inertia::render('admin/master-data/option-variant/option-manager', [
             'variantGroups' => $variantGroups,
-            'filters' => $request->only(['variant_group_id']),
+        ]);
+    }
+
+    /**
+     * Display variant options for a specific group.
+     */
+    public function manage(VariantGroup $variantGroup)
+    {
+        $variantOptions = VariantOption::where('variant_group_id', $variantGroup->id)
+            ->orderBy('sort_order')
+            ->paginate(10);
+
+        return Inertia::render('admin/master-data/option-variant/option-details', [
+            'variantGroup' => $variantGroup,
+            'variantOptions' => $variantOptions,
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $variantGroups = VariantGroup::active()->ordered()->get();
+        $variantGroup = null;
+        
+        // If coming from specific variant group page
+        if ($request->has('variant_group_id')) {
+            $variantGroup = VariantGroup::find($request->variant_group_id);
+        }
 
-        return Inertia::render('admin/master-data/variant-option/create-variant-option', [
+        return Inertia::render('admin/master-data/option-variant/form.option-manager', [
             'variantGroups' => $variantGroups,
+            'variantGroup' => $variantGroup,
         ]);
     }
 
@@ -59,7 +72,7 @@ class VariantOptionController extends Controller
 
         VariantOption::create($validated);
 
-        return redirect()->route('admin.variant-options.index')
+        return redirect()->route('admin.variant-options.manage', $validated['variant_group_id'])
             ->with('success', 'Variant option created successfully.');
     }
 
@@ -83,9 +96,10 @@ class VariantOptionController extends Controller
         $variantGroups = VariantGroup::active()->ordered()->get();
         $variantOption->load(['variantGroup']);
 
-        return Inertia::render('admin/master-data/variant-option/edit-variant-option', [
+        return Inertia::render('admin/master-data/option-variant/form.option-manager', [
             'variantOption' => $variantOption,
             'variantGroups' => $variantGroups,
+            'variantGroup' => $variantOption->variantGroup,
         ]);
     }
 
@@ -104,7 +118,7 @@ class VariantOptionController extends Controller
 
         $variantOption->update($validated);
 
-        return redirect()->route('admin.variant-options.index')
+        return redirect()->route('admin.variant-options.manage', $validated['variant_group_id'])
             ->with('success', 'Variant option updated successfully.');
     }
 
@@ -113,9 +127,10 @@ class VariantOptionController extends Controller
      */
     public function destroy(VariantOption $variantOption)
     {
+        $groupId = $variantOption->variant_group_id;
         $variantOption->delete();
 
-        return redirect()->route('admin.variant-options.index')
+        return redirect()->route('admin.variant-options.manage', $groupId)
             ->with('success', 'Variant option deleted successfully.');
     }
 
