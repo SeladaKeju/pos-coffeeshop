@@ -10,6 +10,7 @@ import { type BreadcrumbItem, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { FormEvent, useState } from 'react';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 interface CategoriesPageProps {
     categories: Category[];

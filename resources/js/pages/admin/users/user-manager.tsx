@@ -1,18 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { CustomTable } from '@/components/ui/c-table';
-import { SearchInput } from '@/components/ui/search-input';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type User } from '@/types';
+import { type BreadcrumbItem, type User, type PageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
-
-interface UsersPageProps {
-    users: User[];
-    filters: {
-        search?: string;
-    };
-}
+import { MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,19 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function UsersPage({ users, filters }: UsersPageProps) {
-    // Get search value from URL parameters
-    const currentSearch = filters?.search || '';
-    const handleSearch = (searchTerm: string) => {
-        router.visit(route('users.index'), {
-            data: {
-                search: searchTerm,
-                page: 1,
-            },
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
+export default function UsersPage({ data, filters }: PageProps<User>) {
     const handleAdd = () => {
         router.visit(route('users.create'));
     };
@@ -57,9 +38,21 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
         }
     };
 
+    const navigateToPage = (page: number) => {
+        router.visit(route('users.index'), {
+            data: {
+                page: page,
+                search: filters?.search,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const columns = [
         {
-            label: 'ID',
+            label: 'No',
+
             render: (user: User) => user.id,
         },
         {
@@ -132,31 +125,21 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                                 <h2 className="text-lg font-semibold">All Users</h2>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                {/* Server-Side Search Input */}
-                                <SearchInput
-                                    value={currentSearch}
-                                    onSearch={handleSearch}
-                                    placeholder="Search users..."
-                                />
+                                <div></div>
                                 <Button onClick={handleAdd}>
                                     <Plus className="mr-2 h-4 w-4" />
                                     Add New User
                                 </Button>
                             </div>
                         </div>
-
-                        {/* Search Results or Empty State */}
-                        {users.length === 0 && currentSearch ? (
-                            <div className="rounded-lg bg-gray-50 py-12 text-center">
-                                <Search className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-                                <h3 className="mb-2 text-lg font-medium text-gray-900">No users found</h3>
-                                <p className="text-gray-500">
-                                    No users match your search for "<span className="font-semibold">{currentSearch}</span>"
-                                </p>
-                            </div>
-                        ) : (
-                            <CustomTable columns={columns} data={users} />
-                        )}
+                        <CustomTable columns={columns} data={data.data} />
+                        <PaginationWrapper
+                            currentPage={data.current_page}
+                            lastPage={data.last_page}
+                            perPage={data.per_page}
+                            total={data.total}
+                            onNavigate={navigateToPage}
+                        />
                     </div>
                 </div>
             </div>
