@@ -11,23 +11,32 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Show the form for creating or editing a user.
+     * Show the form for creating a new user.
      */
-    public function form($id = null)
+    public function create()
     {
-        $user = $id ? User::with('roles')->findOrFail($id) : null;
         $allRoles = Role::all();
 
-        // Format user data with roles as array of strings if user exists
-        $userData = null;
-        if ($user) {
-            $userData = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'roles' => $user->roles->pluck('name')->toArray(),
-            ];
-        }
+        return Inertia::render('admin/users/form.user-manager', [
+            'allRoles' => $allRoles,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     */
+    public function edit(User $user)
+    {
+        $user->load('roles');
+        $allRoles = Role::all();
+
+        // Format user data with roles as array of strings
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->roles->pluck('name')->toArray(),
+        ];
 
         return Inertia::render('admin/users/form.user-manager', [
             'user' => $userData,
@@ -40,7 +49,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
         $query = User::with('roles');
 
         // Handle search
@@ -56,7 +64,8 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->get()->map(function ($user) {
+        // Get paginated results - fixed to 10 items per page
+        $users = $query->paginate(10)->through(function ($user) {
             return [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -69,7 +78,7 @@ class UserController extends Controller
         });
 
         return Inertia::render('admin/users/user-manager', [
-            'users' => $users,
+            'data' => $users,
             'filters' => [
                 'search' => $request->search
             ]

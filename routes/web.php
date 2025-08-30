@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MasterData\CategoryController;
-use App\Http\Controllers\MasterData\MenuVariantController;
 use App\Http\Controllers\MasterData\VariantGroupController;
 use App\Http\Controllers\MasterData\VariantOptionController;
 
@@ -21,9 +20,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
-            Route::get('/create', [UserController::class, 'form'])->name('create');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
             Route::post('/', [UserController::class, 'store'])->name('store');
-            Route::get('/{user}/edit', [UserController::class, 'form'])->name('edit');
+            Route::get('/{user}', [UserController::class, 'show'])->name('show');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
             Route::put('/{user}', [UserController::class, 'update'])->name('update');
             Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         });

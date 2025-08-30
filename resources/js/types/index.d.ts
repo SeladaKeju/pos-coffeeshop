@@ -24,6 +24,19 @@ export interface NavItem {
     subitem?: NavItem[];
 }
 
+export interface PaginatedResponse<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
@@ -80,4 +93,22 @@ export interface VariantOption {
     is_active: boolean;
     variant_group_id: number;
 }
+
+export interface PageFilter {
+    search?: string;
+    [key: string]: unknown;
+}
+
+export interface FlashProps {
+    success?: string;
+    error?: string;
+    [key: string]: unknown;
+}
+
+export type PageProps<T = any> = {
+    data: PaginatedResponse<T>;
+    filters?: PageFilter;
+    flash?: FlashProps;
+    [key: string]: unknown;
+};
 
