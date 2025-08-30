@@ -105,7 +105,7 @@ export interface FlashProps {
     [key: string]: unknown;
 }
 
-export type PageProps<T = any> = {
+export type PageProps<T = unknown> = {
     data: PaginatedResponse<T>;
     filters?: PageFilter;
     flash?: FlashProps;
