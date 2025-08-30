@@ -52,8 +52,8 @@ class UserController extends Controller
         $query = User::with('roles');
 
         // Handle search
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
+        $search = $request->get('search');
+        if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
@@ -65,7 +65,7 @@ class UserController extends Controller
         }
 
         // Get paginated results - fixed to 10 items per page
-        $users = $query->paginate(10)->through(function ($user) {
+        $users = $query->paginate(10)->withQueryString()->through(function ($user) {
             return [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -80,7 +80,7 @@ class UserController extends Controller
         return Inertia::render('admin/users/user-manager', [
             'data' => $users,
             'filters' => [
-                'search' => $request->search
+                'search' => $search
             ]
         ]);
     }

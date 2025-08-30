@@ -6,18 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, Category } from '@/types';
+import { type BreadcrumbItem, CategoriesPageProps, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
-
-interface CategoriesPageProps {
-    categories: Category[];
-    filters: {
-        search?: string;
-    };
-}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,6 +31,10 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
     // Get search value from URL parameters
     const currentSearch = filters?.search || '';
 
+    // Safe check untuk categories data
+    const categoriesData = categories?.data || [];
+    const hasCategories = categoriesData.length > 0;
+
     // Inertia form setup
     const { data, setData, post, put, processing, errors, reset } = useForm({
         name: '',
@@ -49,6 +46,17 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
             data: {
                 search: searchTerm,
                 page: 1,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const navigateToPage = (page: number) => {
+        router.visit(route('categories.index'), {
+            data: {
+                page: page,
+                search: currentSearch,
             },
             preserveState: true,
             preserveScroll: true,
@@ -122,7 +130,14 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
     const columns = [
         {
             label: 'No',
-            render: (category: Category) => category.sort,
+            render: (category: Category) => {
+                if (!categories?.data) return '-';
+                const categoryIndex = categories.data.findIndex(c => c.id === category.id);
+                const currentPage = categories.current_page || 1;
+                const perPage = categories.per_page || 10;
+                if (categoryIndex === -1) return '-';
+                return (currentPage - 1) * perPage + categoryIndex + 1;
+            },
         },
         {
             label: 'Name',
@@ -192,7 +207,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                         </div>
 
                         {/* Search Results or Empty State */}
-                        {categories.length === 0 && currentSearch ? (
+                        {!hasCategories && currentSearch ? (
                             <div className="rounded-lg bg-gray-50 py-12 text-center">
                                 <Search className="mx-auto mb-4 h-12 w-12 text-gray-300" />
                                 <h3 className="mb-2 text-lg font-medium text-gray-900">No categories found</h3>
@@ -200,7 +215,7 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                     No categories match your search for "<span className="font-semibold">{currentSearch}</span>"
                                 </p>
                             </div>
-                        ) : categories.length === 0 ? (
+                        ) : !hasCategories ? (
                             <div className="rounded-lg bg-gray-50 py-12 text-center">
                                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
                                     <span className="text-2xl text-gray-400">📂</span>
@@ -209,7 +224,18 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                 <p className="mb-4 text-gray-500">Categories will appear here once they are created</p>
                             </div>
                         ) : (
-                            <CustomTable columns={columns} data={categories} />
+                            <>
+                                <CustomTable columns={columns} data={categoriesData} />
+                                {categories && (
+                                    <PaginationWrapper
+                                        currentPage={categories.current_page || 1}
+                                        lastPage={categories.last_page || 1}
+                                        perPage={categories.per_page || 10}
+                                        total={categories.total || 0}
+                                        onNavigate={navigateToPage}
+                                    />
+                                )}
+                            </>
                         )}
                     </div>
                 </div>

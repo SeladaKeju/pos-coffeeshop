@@ -112,3 +112,10 @@ export type PageProps<T = any> = {
     [key: string]: unknown;
 };
 
+export interface CategoriesPageProps {
+    categories: PaginatedResponse<Category>;
+    filters: {
+        search?: string;
+    };
+}
+
