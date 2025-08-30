@@ -72,21 +72,10 @@ class VariantOptionController extends Controller
 
         VariantOption::create($validated);
 
-        return redirect()->route('admin.variant-options.manage', $validated['variant_group_id'])
+        return redirect()->route('admin.variant-options.manage')
             ->with('success', 'Variant option created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(VariantOption $variantOption)
-    {
-        $variantOption->load(['variantGroup']);
-
-        return Inertia::render('admin/master-data/variant-option/show-variant-option', [
-            'variantOption' => $variantOption,
-        ]);
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -118,7 +107,7 @@ class VariantOptionController extends Controller
 
         $variantOption->update($validated);
 
-        return redirect()->route('admin.variant-options.manage', $validated['variant_group_id'])
+        return redirect()->route('admin.variant-options.manage')
             ->with('success', 'Variant option updated successfully.');
     }
 

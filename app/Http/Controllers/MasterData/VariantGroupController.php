@@ -50,16 +50,6 @@ class VariantGroupController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(VariantGroup $variantGroup)
-    {
-        return Inertia::render('admin/master-data/menu-variant/variant-group-show', [
-            'variantGroup' => $variantGroup,
-        ]);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(VariantGroup $variantGroup)

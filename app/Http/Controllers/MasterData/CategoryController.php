@@ -19,8 +19,8 @@ class CategoryController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
         
-        // Order by sort then by name
-        $categories = $query->orderBy('sort')->orderBy('name')->get();
+        // Order by sort then by name and paginate
+        $categories = $query->orderBy('sort')->orderBy('name')->paginate(10)->withQueryString();
         
         return Inertia::render('admin/master-data/category/category-manager', [
             'categories' => $categories,
