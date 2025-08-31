@@ -76,7 +76,12 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
     const columns = [
         {
             label: 'No',
-            render: (variantOption: VariantOption) => variantOption.sort_order,
+            render: (variantOption: VariantOption) => {
+                const userIndex = variantOptions.data.findIndex(u => u.id === variantOption.id);
+                const currentPage = variantOptions.current_page;
+                const perPage = variantOptions.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
+            }
         },
         {
             label: 'Name',
@@ -91,7 +96,7 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
             render: (variantOption: VariantOption) => (
                 <div className="text-sm">
                     {variantOption.extra_price > 0 ? (
-                        <span className="text-green-600">Rp.{variantOption.extra_price}</span>
+                        <span className="text-green-600">Rp. {variantOption.extra_price}</span>
                     ) : (
                         <span className="text-gray-500">Free</span>
                     )}

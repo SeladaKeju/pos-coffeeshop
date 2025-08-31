@@ -4,13 +4,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, CategoriesPageProps, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { FormEvent, useState } from 'react';
-import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -118,12 +118,10 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
         {
             label: 'No',
             render: (category: Category) => {
-                if (!categories?.data) return '-';
-                const categoryIndex = categories.data.findIndex(c => c.id === category.id);
-                const currentPage = categories.current_page || 1;
-                const perPage = categories.per_page || 10;
-                if (categoryIndex === -1) return '-';
-                return (currentPage - 1) * perPage + categoryIndex + 1;
+                const userIndex = categories.data.findIndex((u) => u.id === category.id);
+                const currentPage = categories.current_page;
+                const perPage = categories.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
             },
         },
         {

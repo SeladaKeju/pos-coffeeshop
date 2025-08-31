@@ -52,7 +52,12 @@ export default function OptionManagerPage({ variantGroups, filters }: VariantGro
     const columns = [
         {
             label: 'No',
-            render: (variantGroup: VariantGroup) => variantGroup.sort_order,
+            render: (variantGroup: VariantGroup) => {
+                const userIndex = variantGroups.data.findIndex(u => u.id === variantGroup.id);
+                const currentPage = variantGroups.current_page;
+                const perPage = variantGroups.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
+            },
         },
         {
             label: 'Name',
