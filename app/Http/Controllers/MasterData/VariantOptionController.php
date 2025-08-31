@@ -122,14 +122,4 @@ class VariantOptionController extends Controller
         return redirect()->route('admin.variant-options.manage', $groupId)
             ->with('success', 'Variant option deleted successfully.');
     }
-
-    /**
-     * Get variant options by group for API calls
-     */
-    public function getByGroup(VariantGroup $variantGroup)
-    {
-        $options = $variantGroup->activeVariantOptions;
-
-        return response()->json($options);
-    }
 }

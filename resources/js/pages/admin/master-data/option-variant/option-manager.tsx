@@ -1,19 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { CustomTable } from '@/components/ui/c-table';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, VariantGroup } from '@/types';
+import { type BreadcrumbItem, VariantGroup, VariantGroupsPageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { ArrowRight, Search } from 'lucide-react';
-
-interface VariantGroupsPageProps {
-    variantGroups: {
-        data: VariantGroup[];
-    };
-    filters?: {
-        search?: string;
-    };
-}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -44,6 +36,17 @@ export default function OptionManagerPage({ variantGroups, filters }: VariantGro
     const handleManageOptions = (variantGroupId: number) => {
         // Navigate to variant options management page for specific group
         router.visit(route('admin.variant-options.manage', variantGroupId));
+    };
+
+    const navigateToPage = (page: number) => {
+        router.visit(route('admin.variant-options.index'), {
+            data: {
+                page: page,
+                search: currentSearch,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const columns = [
@@ -109,7 +112,16 @@ export default function OptionManagerPage({ variantGroups, filters }: VariantGro
                                 </p>
                             </div>
                         ) : (
-                            <CustomTable columns={columns} data={variantGroups.data} />
+                            <>
+                                <CustomTable columns={columns} data={variantGroups.data} />
+                                <PaginationWrapper
+                                    currentPage={variantGroups.current_page}
+                                    lastPage={variantGroups.last_page}
+                                    perPage={variantGroups.per_page}
+                                    total={variantGroups.total}
+                                    onNavigate={navigateToPage}
+                                />
+                            </>
                         )}
                     </div>
                 </div>

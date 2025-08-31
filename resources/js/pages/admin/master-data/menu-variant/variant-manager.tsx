@@ -3,18 +3,10 @@ import { CustomTable } from '@/components/ui/c-table';
 import { SearchInput } from '@/components/ui/search-input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, VariantGroup } from '@/types';
+import { type BreadcrumbItem, VariantGroup, VariantGroupsPageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
-
-interface VariantGroupsPageProps {
-    variantGroups: {
-        data: VariantGroup[];
-    };
-    filters?: {
-        search?: string;
-    };
-}
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -42,6 +34,17 @@ export default function VariantGroupsPage({ variantGroups, filters }: VariantGro
         });
     };
     
+        const navigateToPage = (page: number) => {
+        router.visit(route('admin.variant-groups.index'), {
+            data: {
+                page: page,
+                search: currentSearch,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const handleAdd = () => {
         router.visit(route('admin.variant-groups.create'));
     };
@@ -167,7 +170,16 @@ export default function VariantGroupsPage({ variantGroups, filters }: VariantGro
                                 </p>
                             </div>
                         ) : (
+                            <>  
                             <CustomTable columns={columns} data={variantGroups.data} />
+                            <PaginationWrapper
+                                currentPage={variantGroups.current_page}
+                                lastPage={variantGroups.last_page}
+                                perPage={variantGroups.per_page}
+                                total={variantGroups.total}
+                                onNavigate={navigateToPage}
+                            />
+                            </>
                         )}
                     </div>
                 </div>

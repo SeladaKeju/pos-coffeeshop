@@ -119,3 +119,28 @@ export interface CategoriesPageProps {
     };
 }
 
+export interface VariantGroupsPageProps {
+    variantGroups: PaginatedResponse<VariantGroup>;
+    filters?: {
+        search?: string;
+    };
+}
+
+
+export interface VariantGroupsPageProps {
+    variantGroups: {
+        data: VariantGroup[];
+    };
+    filters?: {
+        search?: string;
+    };
+}
+
+
+export interface VariantOptionsDetailPageProps {
+    variantGroup: VariantGroup;
+    variantOptions: PaginatedResponse<VariantOption>;
+    filters?: {
+        search?: string;
+    };
+}

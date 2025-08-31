@@ -106,10 +106,6 @@ export default function UsersPage({ data, filters }: PageProps<User>) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleView(user.id)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEdit(user.id)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit User
