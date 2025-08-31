@@ -5,7 +5,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, VariantOption, VariantOptionsDetailPageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { ArrowLeft, Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowLeft, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 export default function VariantOptionsDetailPage({ variantGroup, variantOptions, filters }: VariantOptionsDetailPageProps) {

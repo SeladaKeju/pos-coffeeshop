@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, User, PageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
+import { Search, MoreVertical, Pencil, Trash2, Plus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -36,10 +36,6 @@ export default function UsersPage({ data, filters }: PageProps<User>) {
 
     const handleEdit = (id: number) => {
         router.visit(route('users.edit', id));
-    };
-
-    const handleView = (id: number) => {
-        router.visit(route('users.show', id));
     };
 
     const handleDelete = (id: number, name: string) => {
