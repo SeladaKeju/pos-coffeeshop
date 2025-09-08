@@ -21,7 +21,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Menus',
-        href: '/menus',
+        href: '/create-menu',
         icon: UtensilsCrossed,
         role: 'admin',
     },

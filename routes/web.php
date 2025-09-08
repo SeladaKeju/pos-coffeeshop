@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MasterData\CategoryController;
 use App\Http\Controllers\MasterData\VariantGroupController;
 use App\Http\Controllers\MasterData\VariantOptionController;
+use App\Http\Controllers\CreateMenuController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -54,6 +55,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{variantOption}/edit', [VariantOptionController::class, 'edit'])->name('edit');
             Route::put('/{variantOption}', [VariantOptionController::class, 'update'])->name('update');
             Route::delete('/{variantOption}', [VariantOptionController::class, 'destroy'])->name('destroy');
+        });
+
+        // Menu Management Routes
+        Route::prefix('create-menu')->name('admin.create-menu.')->group(function () {
+            Route::get('/', [CreateMenuController::class, 'index'])->name('index');
+            Route::get('/create', [CreateMenuController::class, 'create'])->name('create');
+            Route::post('/', [CreateMenuController::class, 'store'])->name('store');
+            Route::get('/{menu}/edit', [CreateMenuController::class, 'edit'])->name('edit');
+            Route::put('/{menu}', [CreateMenuController::class, 'update'])->name('update');
+            Route::delete('/{menu}', [CreateMenuController::class, 'destroy'])->name('destroy');
+            Route::get('/{menu}/manage-variants', [CreateMenuController::class, 'manage'])->name('manage');
         });
     });
 });

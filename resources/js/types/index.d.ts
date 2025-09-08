@@ -85,6 +85,20 @@ export interface Category {
     updated_at: string;
 }
 
+export interface Menu {
+    id: number;
+    category_id: number;
+    name: string;
+    sku: string;
+    price: number;
+    station: 'kitchen' | 'bar' | 'both';
+    is_active: boolean;
+    category?: Category;
+    variantGroups?: VariantGroup[];
+    created_at: string;
+    updated_at: string;
+}
+
 export interface VariantOption {
     id: number;
     name: string;
