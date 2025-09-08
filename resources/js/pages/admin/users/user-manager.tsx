@@ -1,18 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { CustomTable } from '@/components/ui/c-table';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { SearchInput } from '@/components/ui/search-input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type User } from '@/types';
+import { type BreadcrumbItem, User, PageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Search, MoreVertical, Pencil, Trash2, Eye, Plus } from 'lucide-react';
-
-interface UsersPageProps {
-    users: User[];
-    filters: {
-        search?: string;
-    };
-}
+import { Search, MoreVertical, Pencil, Trash2, Plus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,9 +15,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function UsersPage({ users, filters }: UsersPageProps) {
+export default function UsersPage({ data, filters }: PageProps<User>) {
     // Get search value from URL parameters
     const currentSearch = filters?.search || '';
+    
     const handleSearch = (searchTerm: string) => {
         router.visit(route('users.index'), {
             data: {
@@ -34,16 +29,13 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
             preserveScroll: true,
         });
     };
+    
     const handleAdd = () => {
         router.visit(route('users.create'));
     };
 
     const handleEdit = (id: number) => {
         router.visit(route('users.edit', id));
-    };
-
-    const handleView = (id: number) => {
-        router.visit(route('users.show', id));
     };
 
     const handleDelete = (id: number, name: string) => {
@@ -57,10 +49,26 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
         }
     };
 
+    const navigateToPage = (page: number) => {
+        router.visit(route('users.index'), {
+            data: {
+                page: page,
+                search: currentSearch,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const columns = [
         {
-            label: 'ID',
-            render: (user: User) => user.id,
+            label: 'No',
+            render: (user: User) => {
+                const userIndex = data.data.findIndex(u => u.id === user.id);
+                const currentPage = data.current_page;
+                const perPage = data.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
+            },
         },
         {
             label: 'Name',
@@ -94,10 +102,6 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleView(user.id)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEdit(user.id)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit User
@@ -132,7 +136,6 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                                 <h2 className="text-lg font-semibold">All Users</h2>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                {/* Server-Side Search Input */}
                                 <SearchInput
                                     value={currentSearch}
                                     onSearch={handleSearch}
@@ -146,7 +149,7 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                         </div>
 
                         {/* Search Results or Empty State */}
-                        {users.length === 0 && currentSearch ? (
+                        {data.data.length === 0 && currentSearch ? (
                             <div className="rounded-lg bg-gray-50 py-12 text-center">
                                 <Search className="mx-auto mb-4 h-12 w-12 text-gray-300" />
                                 <h3 className="mb-2 text-lg font-medium text-gray-900">No users found</h3>
@@ -155,7 +158,16 @@ export default function UsersPage({ users, filters }: UsersPageProps) {
                                 </p>
                             </div>
                         ) : (
-                            <CustomTable columns={columns} data={users} />
+                            <>
+                                <CustomTable columns={columns} data={data.data} />
+                                <PaginationWrapper
+                                    currentPage={data.current_page}
+                                    lastPage={data.last_page}
+                                    perPage={data.per_page}
+                                    total={data.total}
+                                    onNavigate={navigateToPage}
+                                />
+                            </>
                         )}
                     </div>
                 </div>

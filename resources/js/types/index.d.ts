@@ -24,6 +24,19 @@ export interface NavItem {
     subitem?: NavItem[];
 }
 
+export interface PaginatedResponse<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
@@ -51,4 +64,97 @@ export interface Role {
     guard_name: string;
     created_at: string;
     updated_at: string;
+}
+
+export interface VariantGroup {
+    id: number;
+    name: string;
+    type: 'single' | 'multiple';
+    is_required: boolean;
+    sort_order: number;
+    is_active: boolean;
+}
+
+
+export interface Category {
+    id: number;
+    name: string;
+    sort: number;
+    menus_count?: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Menu {
+    id: number;
+    category_id: number;
+    name: string;
+    sku: string;
+    price: number;
+    station: 'kitchen' | 'bar' | 'both';
+    is_active: boolean;
+    category?: Category;
+    variantGroups?: VariantGroup[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface VariantOption {
+    id: number;
+    name: string;
+    extra_price: number;
+    sort_order: number;
+    is_active: boolean;
+    variant_group_id: number;
+}
+
+export interface PageFilter {
+    search?: string;
+    [key: string]: unknown;
+}
+
+export interface FlashProps {
+    success?: string;
+    error?: string;
+    [key: string]: unknown;
+}
+
+export type PageProps<T = unknown> = {
+    data: PaginatedResponse<T>;
+    filters?: PageFilter;
+    flash?: FlashProps;
+    [key: string]: unknown;
+};
+
+export interface CategoriesPageProps {
+    categories: PaginatedResponse<Category>;
+    filters: {
+        search?: string;
+    };
+}
+
+export interface VariantGroupsPageProps {
+    variantGroups: PaginatedResponse<VariantGroup>;
+    filters?: {
+        search?: string;
+    };
+}
+
+
+export interface VariantGroupsPageProps {
+    variantGroups: {
+        data: VariantGroup[];
+    };
+    filters?: {
+        search?: string;
+    };
+}
+
+
+export interface VariantOptionsDetailPageProps {
+    variantGroup: VariantGroup;
+    variantOptions: PaginatedResponse<VariantOption>;
+    filters?: {
+        search?: string;
+    };
 }

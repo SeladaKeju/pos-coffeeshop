@@ -21,7 +21,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Menus',
-        href: '/menus',
+        href: '/create-menu',
         icon: UtensilsCrossed,
         role: 'admin',
     },
@@ -36,8 +36,13 @@ const mainNavItems: NavItem[] = [
                     icon: LayoutGrid,
                 },
                 {
-                    title: 'Menu Variant',
-                    href: `/menu-variants`,
+                    title: 'Variant Groups',
+                    href: `/variant-groups`,
+                    icon: LayoutGrid,
+                },
+                {
+                    title: 'Variant Options',
+                    href: `/variant-options`,
                     icon: LayoutGrid,
                 },
             ],

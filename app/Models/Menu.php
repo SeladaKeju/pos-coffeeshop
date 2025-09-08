@@ -31,11 +31,6 @@ class Menu extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function variants(): HasMany
-    {
-        return $this->hasMany(MenuVariant::class);
-    }
-
     public function variantGroups(): BelongsToMany
     {
         return $this->belongsToMany(VariantGroup::class, 'menu_variant_groups');
