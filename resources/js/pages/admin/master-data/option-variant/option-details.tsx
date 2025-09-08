@@ -3,19 +3,10 @@ import { CustomTable } from '@/components/ui/c-table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, VariantGroup, VariantOption } from '@/types';
+import { type BreadcrumbItem, VariantOption, VariantOptionsDetailPageProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { ArrowLeft, Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-
-interface VariantOptionsDetailPageProps {
-    variantGroup: VariantGroup;
-    variantOptions: {
-        data: VariantOption[];
-    };
-    filters?: {
-        search?: string;
-    };
-}
+import { ArrowLeft, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 export default function VariantOptionsDetailPage({ variantGroup, variantOptions, filters }: VariantOptionsDetailPageProps) {
     const currentSearch = filters?.search || '';
@@ -60,10 +51,6 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
         router.visit(route('admin.variant-options.edit', id));
     };
 
-    const handleView = (id: number) => {
-        router.visit(route('admin.variant-options.show', id));
-    };
-
     const handleDelete = (id: number, name: string) => {
         if (confirm(`Are you sure you want to delete variant option "${name}"?`)) {
             router.delete(route('admin.variant-options.destroy', id), {
@@ -75,10 +62,26 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
         }
     };
 
+    const navigateToPage = (page: number) => {
+        router.visit(route('admin.variant-options.manage', variantGroup.id), {
+            data: {
+                page: page,
+                search: currentSearch,
+            },
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const columns = [
         {
             label: 'No',
-            render: (variantOption: VariantOption) => variantOption.sort_order,
+            render: (variantOption: VariantOption) => {
+                const userIndex = variantOptions.data.findIndex(u => u.id === variantOption.id);
+                const currentPage = variantOptions.current_page;
+                const perPage = variantOptions.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
+            }
         },
         {
             label: 'Name',
@@ -93,7 +96,7 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
             render: (variantOption: VariantOption) => (
                 <div className="text-sm">
                     {variantOption.extra_price > 0 ? (
-                        <span className="text-green-600">Rp.{variantOption.extra_price}</span>
+                        <span className="text-green-600">Rp. {variantOption.extra_price}</span>
                     ) : (
                         <span className="text-gray-500">Free</span>
                     )}
@@ -115,10 +118,6 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleView(variantOption.id)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEdit(variantOption.id)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit Option
@@ -188,7 +187,16 @@ export default function VariantOptionsDetailPage({ variantGroup, variantOptions,
                                 </Button>
                             </div>
                         ) : (
-                            <CustomTable columns={columns} data={variantOptions.data} />
+                            <>
+                                <CustomTable columns={columns} data={variantOptions.data} />
+                                <PaginationWrapper
+                                    currentPage={variantOptions.current_page}
+                                    lastPage={variantOptions.last_page}
+                                    perPage={variantOptions.per_page}
+                                    total={variantOptions.total}
+                                    onNavigate={navigateToPage}
+                                />
+                            </>
                         )}
                     </div>
                 </div>

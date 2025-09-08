@@ -15,26 +15,46 @@ class VariantOptionController extends Controller
      */
     public function index(Request $request)
     {
-        $variantGroups = VariantGroup::orderBy('sort_order')
-            ->paginate(10);
+        $search = $request->get('search');
+        
+        $query = VariantGroup::orderBy('sort_order');
+        
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        
+        $variantGroups = $query->paginate(10)->withQueryString();
 
         return Inertia::render('admin/master-data/option-variant/option-manager', [
             'variantGroups' => $variantGroups,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
     /**
      * Display variant options for a specific group.
      */
-    public function manage(VariantGroup $variantGroup)
+    public function manage(Request $request, VariantGroup $variantGroup)
     {
-        $variantOptions = VariantOption::where('variant_group_id', $variantGroup->id)
-            ->orderBy('sort_order')
-            ->paginate(10);
+        $search = $request->get('search');
+        
+        $query = VariantOption::where('variant_group_id', $variantGroup->id)
+            ->orderBy('sort_order');
+            
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        
+        $variantOptions = $query->paginate(10)->withQueryString();
 
         return Inertia::render('admin/master-data/option-variant/option-details', [
             'variantGroup' => $variantGroup,
             'variantOptions' => $variantOptions,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
@@ -48,7 +68,7 @@ class VariantOptionController extends Controller
         
         // If coming from specific variant group page
         if ($request->has('variant_group_id')) {
-            $variantGroup = VariantGroup::find($request->variant_group_id);
+            $variantGroup = VariantGroup::find($request->get('variant_group_id'));
         }
 
         return Inertia::render('admin/master-data/option-variant/form.option-manager', [
@@ -57,7 +77,7 @@ class VariantOptionController extends Controller
         ]);
     }
 
-    /**
+        /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -65,14 +85,15 @@ class VariantOptionController extends Controller
         $validated = $request->validate([
             'variant_group_id' => 'required|exists:variant_groups,id',
             'name' => 'required|string|max:255',
-            'extra_price' => 'required|numeric',
-            'sort_order' => 'integer|min:0',
+            'extra_price' => 'required|numeric|min:0',
+            'sort_order' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
-        VariantOption::create($validated);
+        $variantOption = VariantOption::create($validated);
+        $variantGroup = VariantGroup::find($validated['variant_group_id']);
 
-        return redirect()->route('admin.variant-options.manage')
+        return redirect()->route('admin.variant-options.manage', $variantGroup)
             ->with('success', 'Variant option created successfully.');
     }
 
@@ -86,9 +107,9 @@ class VariantOptionController extends Controller
         $variantOption->load(['variantGroup']);
 
         return Inertia::render('admin/master-data/option-variant/form.option-manager', [
-            'variantOption' => $variantOption,
             'variantGroups' => $variantGroups,
             'variantGroup' => $variantOption->variantGroup,
+            'variantOption' => $variantOption,
         ]);
     }
 
@@ -100,14 +121,15 @@ class VariantOptionController extends Controller
         $validated = $request->validate([
             'variant_group_id' => 'required|exists:variant_groups,id',
             'name' => 'required|string|max:255',
-            'extra_price' => 'required|numeric',
-            'sort_order' => 'integer|min:0',
+            'extra_price' => 'required|integer|min:0',
+            'sort_order' => 'required|integer|min:0',
             'is_active' => 'boolean',
         ]);
 
         $variantOption->update($validated);
+        $variantGroup = VariantGroup::find($validated['variant_group_id']);
 
-        return redirect()->route('admin.variant-options.manage')
+        return redirect()->route('admin.variant-options.manage', $variantGroup)
             ->with('success', 'Variant option updated successfully.');
     }
 
@@ -121,15 +143,5 @@ class VariantOptionController extends Controller
 
         return redirect()->route('admin.variant-options.manage', $groupId)
             ->with('success', 'Variant option deleted successfully.');
-    }
-
-    /**
-     * Get variant options by group for API calls
-     */
-    public function getByGroup(VariantGroup $variantGroup)
-    {
-        $options = $variantGroup->activeVariantOptions;
-
-        return response()->json($options);
     }
 }

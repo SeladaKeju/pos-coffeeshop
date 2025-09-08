@@ -4,13 +4,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { SearchInput } from '@/components/ui/search-input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, CategoriesPageProps, Category } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Eye, MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { FormEvent, useState } from 'react';
-import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,7 +26,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function CategoriesPage({ categories, filters }: CategoriesPageProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [isViewMode, setIsViewMode] = useState(false);
 
     // Get search value from URL parameters
     const currentSearch = filters?.search || '';
@@ -65,7 +64,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
 
     const handleAdd = () => {
         setEditingCategory(null);
-        setIsViewMode(false);
         reset();
         setData({
             name: '',
@@ -76,17 +74,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
 
     const handleEdit = (category: Category) => {
         setEditingCategory(category);
-        setIsViewMode(false);
-        setData({
-            name: category.name,
-            sort: category.sort,
-        });
-        setIsDialogOpen(true);
-    };
-
-    const handleView = (category: Category) => {
-        setEditingCategory(category);
-        setIsViewMode(true);
         setData({
             name: category.name,
             sort: category.sort,
@@ -131,12 +118,10 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
         {
             label: 'No',
             render: (category: Category) => {
-                if (!categories?.data) return '-';
-                const categoryIndex = categories.data.findIndex(c => c.id === category.id);
-                const currentPage = categories.current_page || 1;
-                const perPage = categories.per_page || 10;
-                if (categoryIndex === -1) return '-';
-                return (currentPage - 1) * perPage + categoryIndex + 1;
+                const userIndex = categories.data.findIndex((u) => u.id === category.id);
+                const currentPage = categories.current_page;
+                const perPage = categories.per_page;
+                return (currentPage - 1) * perPage + userIndex + 1;
             },
         },
         {
@@ -162,10 +147,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleView(category)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEdit(category)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit Category
@@ -245,13 +226,11 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>{isViewMode ? 'View Category' : editingCategory ? 'Edit Category' : 'Add New Category'}</DialogTitle>
+                        <DialogTitle>{editingCategory ? 'Edit Category' : 'Add New Category'}</DialogTitle>
                         <DialogDescription>
-                            {isViewMode
-                                ? 'Category details and information.'
-                                : editingCategory
-                                  ? 'Make changes to the category information.'
-                                  : 'Fill in the category information to create a new category.'}
+                            {editingCategory
+                                ? 'Make changes to the category information.'
+                                : 'Fill in the category information to create a new category.'}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -265,7 +244,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     placeholder="Enter category name"
-                                    disabled={isViewMode}
                                     className={errors.name ? 'border-red-500' : ''}
                                 />
                                 {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
@@ -280,7 +258,6 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
                                     onChange={(e) => setData('sort', parseInt(e.target.value) || 1)}
                                     placeholder="Enter sort order"
                                     min="1"
-                                    disabled={isViewMode}
                                     className={errors.sort ? 'border-red-500' : ''}
                                 />
                                 {errors.sort && <p className="text-sm text-red-500">{errors.sort}</p>}
@@ -289,13 +266,11 @@ export default function CategoriesPage({ categories, filters }: CategoriesPagePr
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                {isViewMode ? 'Close' : 'Cancel'}
+                                Cancel
                             </Button>
-                            {!isViewMode && (
-                                <Button type="submit" disabled={processing}>
-                                    {processing ? 'Saving...' : editingCategory ? 'Update Category' : 'Create Category'}
-                                </Button>
-                            )}
+                            <Button type="submit" disabled={processing}>
+                                {processing ? 'Saving...' : editingCategory ? 'Update Category' : 'Create Category'}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
